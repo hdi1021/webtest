@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>카드 매칭 게임</title>
+</head>
+<body>
+    <div class="controls">
+        <button onclick="startGame('normal')">Normal Mode (6x6)</button>
+        <button onclick="startGame('hard')">Hard Mode (8x8)</button>
+    </div>
+    <div id="gameBoard"></div>
+    <script src="cardGame.js"></script>
+    <script>
+        function startGame(difficulty) {
+            const game = new CardGame(difficulty);
+            const cards = game.initializeGame();
+            const board = game.createBoard();
+            
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            gameBoard.appendChild(board);
+            
+            cards.forEach(cardValue => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.value = cardValue;
+                card.innerHTML = '?';
+                board.appendChild(card);
+            });
+        }
+    </script>
+    <style>
+        .card {
+            background-color: #ddd;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+        }
+    </style>
+</body>
+</html>
