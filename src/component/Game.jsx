@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import GameBoard from './GameBoard';
 import { defaultCards } from '../assets/defaultCards';  // import 구문 수정
 
+// 스타일 컴포넌트들
+// 게임 전체 컨테이너: 2인 모드일 때 화면을 반으로 나누는 배경 적용
 const GameContainer = styled.div`
   min-height: 100vh;
   background: ${props => 
@@ -14,6 +16,7 @@ const GameContainer = styled.div`
   padding: 2rem;
 `;
 
+// 게임 상단 정보 표시 영역
 const GameHeader = styled.div`
   max-width: 1200px;
   margin: 0 auto 2rem;
@@ -152,6 +155,7 @@ const PlayerInfo = styled.div`
   }
 `;
 
+// 난이도별 게임 설정 반환 함수
 const getDifficultyConfig = (difficulty) => {
   if (typeof difficulty === 'string') {
     switch (difficulty) {
@@ -170,28 +174,33 @@ const getDifficultyConfig = (difficulty) => {
   };
 };
 
+// 메인 게임 컴포넌트
 const Game = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  // 라우터로부터 난이도, 게임모드, 사용자 이미지 정보 받아오기
   const { difficulty, gameMode, userImages } = location.state || {};
 
+  // 난이도 설정 가져오기
   const difficultyConfig = getDifficultyConfig(difficulty);
 
-  const [cards, setCards] = useState([]);
-  const [timer, setTimer] = useState(gameMode === 'timeAttack' ? difficultyConfig.time : 0);
-  const [moves, setMoves] = useState(0);
-  const [matchedPairs, setMatchedPairs] = useState([]);
-  const [matchedPairsPlayer1, setMatchedPairsPlayer1] = useState([]);
-  const [matchedPairsPlayer2, setMatchedPairsPlayer2] = useState([]);
-  const [flippedCards, setFlippedCards] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  const [countdown, setCountdown] = useState(null);
-  const [gameReady, setGameReady] = useState(false);
-  const [isGameCleared, setIsGameCleared] = useState(false);
-  const [currentPlayer, setCurrentPlayer] = useState(1); // 1 또는 2
-  const [playerScores, setPlayerScores] = useState({ 1: 0, 2: 0 });
+  // 상태 관리
+  const [cards, setCards] = useState([]); // 카드 배열
+  const [timer, setTimer] = useState(gameMode === 'timeAttack' ? difficultyConfig.time : 0); // 타이머
+  const [moves, setMoves] = useState(0); // 시도 횟수
+  const [matchedPairs, setMatchedPairs] = useState([]); // 매칭된 카드 쌍
+  const [matchedPairsPlayer1, setMatchedPairsPlayer1] = useState([]); // 플레이어1 매칭
+  const [matchedPairsPlayer2, setMatchedPairsPlayer2] = useState([]); // 플레이어2 매칭
+  const [flippedCards, setFlippedCards] = useState([]); // 현재 뒤집힌 카드
+  const [showModal, setShowModal] = useState(false); // 모달 표시 여부
+  const [modalMessage, setModalMessage] = useState(''); // 모달 메시지
+  const [countdown, setCountdown] = useState(null); // 게임 시작 카운트다운
+  const [gameReady, setGameReady] = useState(false); // 게임 준비 상태
+  const [isGameCleared, setIsGameCleared] = useState(false); // 게임 클리어 상태
+  const [currentPlayer, setCurrentPlayer] = useState(1); // 현재 플레이어
+  const [playerScores, setPlayerScores] = useState({ 1: 0, 2: 0 }); // 플레이어 점수
 
+  // 게임 초기화 함수
   const initializeGame = () => {
     const totalPairs = difficultyConfig.pairs;
     const gameImages = [];
@@ -241,6 +250,7 @@ const Game = () => {
     setShowModal(false);
   };
 
+  // 카드 클릭 핸들러
   const handleCardClick = (clickedIndex) => {
     if (flippedCards.length === 2) return;
     if (cards[clickedIndex].isMatched) return;
@@ -287,6 +297,7 @@ const Game = () => {
     }
   };
 
+  // 게임 시작 시 카운트다운 효과
   useEffect(() => {
     setGameReady(true);
     setCountdown(3);
@@ -309,6 +320,7 @@ const Game = () => {
     // eslint-disable-next-line
   }, []);
 
+  // 타이머 관리 효과
   useEffect(() => {
     if (countdown === null && gameReady && !isGameCleared) {
       const timerInterval = setInterval(() => {
@@ -331,6 +343,7 @@ const Game = () => {
     }
   }, [gameMode, countdown, gameReady, isGameCleared]);
 
+  // 게임 클리어 체크 효과
   useEffect(() => {
     if (gameMode === 'twoPlayer') {
       const requiredPairs = difficultyConfig.pairs;
@@ -344,14 +357,15 @@ const Game = () => {
         setIsGameCleared(true);
         setShowModal(true);
         const message = gameMode === 'timeAttack'
-          ? `축하합니다! ${formatTime(difficultyConfig.time - timer, true)} 남기고 클리어하셨습니다!`
-          : `축하합니다! ${formatTime(timer, true)} 만에 클리어하셨습니다!`;
+          ? `축하합니다! 클리어하셨습니다!`
+          : `축하합니다! 클리어하셨습니다!`;
         setModalMessage(message);
       }
     }
     // eslint-disable-next-line
   }, [matchedPairs, matchedPairsPlayer1, matchedPairsPlayer2, timer, gameMode, difficultyConfig]);
 
+  // 시간 포맷팅 함수
   const formatTime = (seconds, isResult = false) => {
     if (seconds < 0) return '0분 0초';
     const mins = Math.floor(seconds / 60);

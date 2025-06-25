@@ -15,6 +15,23 @@ const DEFAULT_AVATARS = [
 
 // 홈 화면 컴포넌트
 const HomeScreen = ({ onStartGame, onImageUpload, userImage, difficulty, setDifficulty }) => {
+  // 이미지 업로드 처리를 위한 핸들러 추가
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // 새로운 이미지가 기존 이미지와 중복되는지 확인
+        if (userImage === reader.result) {
+          alert('이미 업로드된 이미지입니다.');
+          return;
+        }
+        onImageUpload(event); // 중복이 아닌 경우에만 업로드 진행
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center p-4">
       <div className="max-w-6xl w-full grid md:grid-cols-2 gap-8 items-center">
@@ -61,7 +78,7 @@ const HomeScreen = ({ onStartGame, onImageUpload, userImage, difficulty, setDiff
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={onImageUpload}
+                  onChange={handleImageUpload} // 기존 onImageUpload를 handleImageUpload로 변경
                   className="hidden"
                   id="imageUpload"
                 />

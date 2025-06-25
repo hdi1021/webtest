@@ -16,7 +16,7 @@ const CardWrapper = styled.div`
   }};
   height: ${props => {
     switch(props.difficulty) {
-      case 'hard': return '70px';    // 높이도 동일하게 조정
+      case 'hard': return '70px';
       case 'normal': return '90px';
       case 'easy': return '120px';
       default: return '120px';
@@ -24,13 +24,14 @@ const CardWrapper = styled.div`
   }};
   border-radius: 12px;
   cursor: pointer;
-  perspective: 1500px;
+  perspective: 1500px; // 3D 효과를 위한 원근감
   transform-style: preserve-3d;
 
+  // 모바일 환경에서 카드 크기 조정
   @media (max-width: 768px) {
     width: ${props => {
       switch(props.difficulty) {
-        case 'hard': return '40px';    // 모바일 8x8 크기 증가
+        case 'hard': return '40px';
         case 'normal': return '55px';
         case 'easy': return '80px';
         default: return '80px';
@@ -47,7 +48,7 @@ const CardWrapper = styled.div`
   }
 `;
 
-// 카드 스��일: 뒤집기 애니메이션과 매칭 효과
+// 카드 본체: 뒤집기 애니메이션과 매칭 효과
 const StyledCard = styled.div`
   position: relative;
   width: 100%;  // 부모 크기에 맞춤
@@ -56,11 +57,12 @@ const StyledCard = styled.div`
   transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
   cursor: pointer;
 
+  // 카드가 뒤집혔을 때 Y축 회전
   ${props => props.isFlipped && `
     transform: rotateY(180deg);
   `}
 
-  // 매칭 성공 시 애니메이션
+  // 매칭 성공 시 애니메이션 효과
   &.matched {
     animation: matched 0.6s ease-out;
   }
@@ -77,15 +79,15 @@ const CardFace = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
-  backface-visibility: hidden;
+  backface-visibility: hidden; // 뒷면 숨김
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
-// 카드 앞면: 이미지 표시
+// 카드 앞면: 실제 이미지 표시
 const CardFront = styled(CardFace)`
   background: white;
-  transform: rotateY(170deg);
+  transform: rotateY(170deg); // 살짝 회전 효과
 
   img {
     width: 100%;
@@ -95,7 +97,7 @@ const CardFront = styled(CardFace)`
   }
 `;
 
-// 카드 뒷면: 기본 디자인
+// 카드 뒷면: 기본 디자인(색상, 테두리 등)
 const CardBack = styled(CardFace)`
   background: linear-gradient(45deg, #84A4F5, #6b8ce0);
   transform: rotateY(0deg);
@@ -111,6 +113,7 @@ const CardBack = styled(CardFace)`
   }
 `;
 
+// Card 컴포넌트: props로 이미지, 상태, 클릭 이벤트, 난이도 전달
 const Card = ({ image, isFlipped, isMatched, onClick, difficulty }) => {
   return (
     <CardWrapper onClick={onClick} difficulty={difficulty}>
