@@ -1,9 +1,12 @@
+// 게임 모드 선택 컴포넌트: 타임어택, 일반, 2인 모드 선택 화면
+
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BiTimer } from 'react-icons/bi';  // 타이머 아이콘
 import { BsPlayCircle } from 'react-icons/bs'; // 일반 플레이 아이콘
 import { FaUserFriends } from 'react-icons/fa'; // 2인 플레이 아이콘
 
+// 모드 카드: 각 게임 모드를 표시하는 카드
 const ModeCard = styled.div`
   width: 280px;
   padding: 2.5rem 2rem;
@@ -23,6 +26,7 @@ const ModeCard = styled.div`
   }
 `;
 
+// 메인 컨테이너: 전체 화면 레이아웃
 const Container = styled.div`
   min-height: 100vh;
   background: linear-gradient(120deg, #fdfbfb 0%, #f4f7ff 100%);
@@ -33,23 +37,27 @@ const Container = styled.div`
   gap: 3rem;
 `;
 
+// 타이틀 스타일 추가
 const Title = styled.h1`
   color: #4E4E4E;
   font-size: 2.5rem;
   margin-bottom: 1rem;
 `;
 
+// 게임 모드 배치 컨테이너
 const ModesContainer = styled.div`
   display: flex;
   gap: 2rem;
 `;
 
+// 모드 아이콘: 각 모드를 대표하는 아이콘
 const ModeIcon = styled.div`
   font-size: 3rem;
   color: #84A4F5;
   margin-bottom: 1rem;
   transition: transform 0.3s ease;
 
+  // 호버 시 아이콘 확대 효과
   ${ModeCard}:hover & {
     transform: scale(1.1);
   }
@@ -83,11 +91,13 @@ const StartButton = styled.button`
   }
 `;
 
+// 게임 모드 선택 컴포넌트: 타임어택, 일반, 2인 모드 선택 화면
 const GameModeSelect = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { difficulty } = location.state || {};
 
+  // 게임 시작 함수: 선택된 모드에 따라 게임 화면으로 이동
   const startGame = (mode) => {
     navigate(`/game`, {
       state: {

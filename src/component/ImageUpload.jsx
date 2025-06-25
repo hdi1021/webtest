@@ -149,17 +149,20 @@ const PreviewCard = styled.div`
   }
 `;
 
+// 이미지 업로드 컴포넌트: 사용자 이미지 선택 및 관리
 const ImageUpload = () => {
+  // 상태 관리
   const [images, setImages] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const mode = new URLSearchParams(location.search).get('mode');
 
+  // 난이도별 최대 이미지 수 설정
   const getMaxImages = () => {
     switch(mode) {
-      case 'easy': return 8;
-      case 'normal': return 12;
-      case 'hard': return 16;
+      case 'easy': return 8;    // 4x4 = 16장 중 8쌍
+      case 'normal': return 12; // 6x6 = 36장 중 18쌍
+      case 'hard': return 16;   // 8x8 = 64장 중 32쌍
       default: return 8;
     }
   };
@@ -175,6 +178,7 @@ const ImageUpload = () => {
     }
   };
 
+  // 이미지 업로드 처리
   const handleImageUpload = (files) => {
     const remainingSlots = maxImages - images.length;
     
@@ -199,6 +203,7 @@ const ImageUpload = () => {
     });
   };
 
+  // 드래그 앤 드롭 처리
   const handleDrop = (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;

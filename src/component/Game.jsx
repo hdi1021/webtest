@@ -194,30 +194,33 @@ const Game = () => {
 
   const initializeGame = () => {
     const totalPairs = difficultyConfig.pairs;
-    let allImages = [];
+    const gameImages = [];
 
-    // 1. 사용자 이미지와 기본 이미지를 모두 수집
+    // 기본 이미지만으로도 게임이 가능하도록 수정
+    const requiredPairs = totalPairs;
+    const repeatedDefaultImages = Array(Math.ceil(requiredPairs / defaultCards.length))
+      .fill(defaultCards)
+      .flat()
+      .slice(0, requiredPairs)
+      .map(card => card.image);
+
+    // 사용자 이미지가 있는 경우 먼저 사용
     if (userImages && userImages.length > 0) {
-      // 사용자 이미지를 복사하고 섞기
-      allImages = [...userImages];
+      const userImagePairs = userImages.map(img => [img, img]).flat();
+      gameImages.push(...userImagePairs);
     }
 
-    // 2. 기본 이미지 셔플
-    const shuffledDefaultImages = [...defaultCards]
-      .sort(() => Math.random() - 0.5)
-      .map(card => card.image);
-    allImages = [...allImages, ...shuffledDefaultImages];
+    // 남은 공간을 기본 이미지로 채움
+    const remainingPairs = totalPairs - (gameImages.length / 2);
+    if (remainingPairs > 0) {
+      repeatedDefaultImages.forEach(img => {
+        if (gameImages.length < totalPairs * 2) {
+          gameImages.push(img, img);
+        }
+      });
+    }
 
-    // 3. 모든 이미지를 섞고 필요한 만큼만 선택
-    const selectedImages = allImages
-      .sort(() => Math.random() - 0.5)
-      .slice(0, totalPairs);
-
-    // 4. 선택된 이미지로 페어 만들기
-    const gamePairs = selectedImages.flatMap(image => [image, image]);
-
-    // 5. 최종 카드 배열 다시 섞기
-    const shuffledCards = gamePairs
+    const shuffledCards = gameImages
       .sort(() => Math.random() - 0.5)
       .map((image, index) => ({
         id: index,
@@ -340,16 +343,9 @@ const Game = () => {
       if (matchedPairs.length === requiredPairs) {
         setIsGameCleared(true);
         setShowModal(true);
-        let message;
-        if (gameMode === 'timeAttack') {
-          if (timer > 0) {
-            message = `축하합니다! 클리어하셨습니다!`;
-          } else {
-            message = '아쉽게도 시간이 초과되었습니다!';
-          }
-        } else {
-          message = `축하합니다! 클리어하셨습니다!`;
-        }
+        const message = gameMode === 'timeAttack'
+          ? `축하합니다! ${formatTime(difficultyConfig.time - timer, true)} 남기고 클리어하셨습니다!`
+          : `축하합니다! ${formatTime(timer, true)} 만에 클리어하셨습니다!`;
         setModalMessage(message);
       }
     }

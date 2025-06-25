@@ -1,7 +1,9 @@
+// 홈 페이지 컴포넌트: 게임 시작 화면을 담당
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import MomentreeFile from '../assets/Home/Momentree_persom.png';
 
+// 메인 컨테이너: 전체 레이아웃 설정
 const HomeContainer = styled.div`
   display: flex;
   min-height: 100vh;
@@ -12,6 +14,7 @@ const HomeContainer = styled.div`
   padding: 0 10%;
 `;
 
+// 왼쪽 섹션: 제목과 시작 버튼 영역
 const LeftSection = styled.div`
   flex: 0.8;
   padding: 3rem;
@@ -73,6 +76,7 @@ const StartButton = styled(Link)`
   }
 `;
 
+// 오른쪽 섹션: 카드 애니메이션 영역
 const RightSection = styled.div`
   flex: 0.8;
   display: flex;
@@ -82,6 +86,7 @@ const RightSection = styled.div`
   padding: 2rem;
 `;
 
+// 카드 애니메이션을 위한 컨테이너
 const CardContainer = styled.div`
   position: relative;
   width: 400px;
@@ -93,6 +98,7 @@ const CardContainer = styled.div`
   cursor: pointer;
 `;
 
+// 프리뷰 카드: 호버 시 움직이는 카드들
 const PreviewCard = styled.div`
   position: absolute;
   width: 200px;
@@ -108,6 +114,7 @@ const PreviewCard = styled.div`
   background-position: center;
   background-repeat: no-repeat;
 
+  // 카드 위치별 기본 변형
   &:nth-child(1) { 
     transform: translateX(-120px) rotate(-15deg);
   }
@@ -121,7 +128,7 @@ const PreviewCard = styled.div`
     transform: translateX(120px) rotate(15deg);
   }
 
-  // 호버 시 효과
+  // 호버 시 카드 움직임 효과
   ${CardContainer}:hover & {
     &:nth-child(1) { 
       transform: translateX(-180px) rotate(-20deg) translateY(20px); 
