@@ -46,7 +46,7 @@ const ModesWrapper = styled.div`
 // 모드 카드 스타일: 각 난이도 옵션의 디자인
 const ModeCard = styled(Link)`
   width: 250px;
-  height: 340px;
+  min-height: 340px;
   padding: 2rem;
   background: white;
   border-radius: 15px;
@@ -54,8 +54,11 @@ const ModeCard = styled(Link)`
   text-align: center;
   box-shadow: 0 10px 20px rgba(132, 164, 245, 0.1);
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-  // 호버 효과와 애니메이션 포함
+  // 호버 효과와 애니메��션 포함
   &:hover {
     transform: translateY(-10px);
     box-shadow: 0 15px 30px rgba(132, 164, 245, 0.2);
@@ -63,13 +66,12 @@ const ModeCard = styled(Link)`
 
   @media (max-width: 1024px) {
     width: 220px;
-    height: 320px;
+    min-height: 320px;
     padding: 1.5rem;
   }
 
   @media (max-width: 768px) {
     width: 280px;
-    height: auto;
     min-height: 300px;
     padding: 2rem;
   }
@@ -99,13 +101,20 @@ const ModeSpec = styled.div`
 
 const ModeImage = styled.img`
   width: 80%;
+  max-width: 200px;
+  height: auto;
   border-radius: 10px;
-  margin-top: 4rem;
+  margin-top: auto;
+  margin-bottom: 1rem;
 
   @media (max-width: 768px) {
     width: 70%;
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
+`;
+
+const ModeTitleWrapper = styled.div`
+  margin-bottom: auto;
 `;
 
 const GameMode = () => {
@@ -115,25 +124,31 @@ const GameMode = () => {
       <ModesWrapper>
         {/* Easy 모드 카드 */}
         <ModeCard to="/image-upload?mode=easy">
-          <ModeTitle>Easy</ModeTitle>
-          <ModeDescription>처음이신가요?</ModeDescription>
-          <ModeSpec>4 x 4 • 16장</ModeSpec>
+          <ModeTitleWrapper>
+            <ModeTitle>Easy</ModeTitle>
+            <ModeDescription>처음이신가요?</ModeDescription>
+            <ModeSpec>4 x 4 • 16장</ModeSpec>
+          </ModeTitleWrapper>
           <ModeImage src={EasyImage} alt="Easy Mode" />
         </ModeCard>
         
         {/* Normal 모드 카드 */}
         <ModeCard to="/image-upload?mode=normal">
-          <ModeTitle>Normal</ModeTitle>
-          <ModeDescription>도전해보세요!</ModeDescription>
-          <ModeSpec>6 x 6 • 36장</ModeSpec>
+          <ModeTitleWrapper>
+            <ModeTitle>Normal</ModeTitle>
+            <ModeDescription>도전해보세요!</ModeDescription>
+            <ModeSpec>6 x 6 • 36장</ModeSpec>
+          </ModeTitleWrapper>
           <ModeImage src={NomalImage} alt="Normal Mode" />
         </ModeCard>
         
         {/* Hard 모드 카드 */}
         <ModeCard to="/image-upload?mode=hard">
-          <ModeTitle>Hard</ModeTitle>
-          <ModeDescription>진정한 고수라면?</ModeDescription>
-          <ModeSpec>8 x 8 • 64장</ModeSpec>
+          <ModeTitleWrapper>
+            <ModeTitle>Hard</ModeTitle>
+            <ModeDescription>진정한 고수라면?</ModeDescription>
+            <ModeSpec>8 x 8 • 64장</ModeSpec>
+          </ModeTitleWrapper>
           <ModeImage src={HardImage} alt="Hard Mode" />
         </ModeCard>
       </ModesWrapper>

@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const UploadContainer = styled.div`
@@ -19,13 +18,6 @@ const Title = styled.h1`
   color: #4E4E4E;
   font-size: 2rem; // 글자 크기 축소
   margin-bottom: 1rem;
-`;
-
-const ImageGrid = styled.div`
-  display: grid;
-  gap: 1rem;
-  max-width: 800px;
-  margin: 2rem 0;
 `;
 
 const StartButton = styled.button`
@@ -178,29 +170,61 @@ const ImageUpload = () => {
     }
   };
 
-  // 이미지 업로드 처리
-  const handleImageUpload = (files) => {
+  // 이미지 해시 생성 함수 추가
+  const getImageHash = async (imageData) => {
+    const data = await fetch(imageData).then(r => r.blob());
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const hash = btoa(reader.result).slice(0, 32);
+        resolve(hash);
+      };
+      reader.readAsBinaryString(data);
+    });
+  };
+
+  // 이미지 중복 체크 함수
+  const isDuplicateImage = async (newImageData) => {
+    const newHash = await getImageHash(newImageData);
+    for (let image of images) {
+      const existingHash = await getImageHash(image);
+      if (newHash === existingHash) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // 이미지 업로드 처리 수정
+  const handleImageUpload = async (files) => {
     const remainingSlots = maxImages - images.length;
     
     if (files.length > remainingSlots) {
-      toast.warning(`최대 ${maxImages}장까지만 선택할 수 있습니다. (${remainingSlots}장 더 선택 가능)`, {
-        position: "top-center",
-        autoClose: 3000
-      });
+      return; // 최대 개수 초과시 처리 중단
     }
 
-    const filesToProcess = Array.from(files).slice(0, remainingSlots);
+    const newImages = [];
 
-    // 순차적으로 이미지 추가
-    filesToProcess.forEach((file, index) => {
+    for (const file of Array.from(files)) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setTimeout(() => {
-          setImages(prev => [...prev, e.target.result]);
-        }, index * 100); // 각 이미지를 100ms 간격으로 추가
-      };
-      reader.readAsDataURL(file);
-    });
+      
+      // Promise로 파일 읽기 작업 래핑
+      const readFileAsDataURL = new Promise((resolve) => {
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+
+      const newImage = await readFileAsDataURL;
+      const isDuplicate = await isDuplicateImage(newImage);
+
+      if (!isDuplicate) {
+        newImages.push(newImage);
+      }
+    }
+
+    if (newImages.length > 0) {
+      setImages(prev => [...prev, ...newImages]);
+    }
   };
 
   // 드래그 앤 드롭 처리
@@ -277,7 +301,6 @@ const ImageUpload = () => {
           게임 시작하기
         </StartButton>
       </ButtonGroup>
-      <ToastContainer />
     </UploadContainer>
   );
 };
